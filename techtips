@@ -1,0 +1,407 @@
+# joshb tip&tricks
+# 11.24.2015
+
+---- symlink (softlink) -----
+
+
+ln -s path/tp/dir localdir/
+
+-d for hardlink
+
+
+---  list what ports and which apps are running ----
+
+netstat -lnptu
+
+lsof -i:port
+
+lsof -i TCP | fgrep LISTEN
+
+
+--------- create tunnel -------
+
+lsof -i:9999 <â€” check to see if port is free
+
+ssh nyc-proxy -L 9999:192.168.1.100:3389
+
+
+----- ssh key to machine@osx -----
+
+cat ~/.ssh/id_rsa.pub | ssh user@server 'cat >> ~/.ssh/authorized_keys'
+
+
+---- delete stupid apple ._ files ----
+
+find . -type f -name "._*" -exec rm "{}" \;
+
+
+------ quick backup of file ------
+
+cp filename{,.bak}
+
+
+
+----- list iptables ----
+
+iptables -t filter -L
+iptables -t nat -L
+
+view CHAINS
+
+iptables -L INPUT
+iptables -nL INPUT   <---- no reverse DNS lookups
+iptables -vnL INPUT
+iptables -vnL INPUT --line-numbers  <-------- list the rules in order
+
+route add default gw 192.168.1.10
+
+---- tom crebbs .screenrc file ----
+
+
+wget http://tom.crebbs.net/.screenrc
+
+
+----- write to usb disks ----
+
+sudo mount -o remount, rw '/mnt/usb_disk/'
+
+sudo mount -t vfat /dev/sda1 /mnt/usb_disk
+
+
+sudo raspi-config
+
+--- browse smb shares --- 
+
+
+smbtree //192.168.1.101 -U localusername
+
+
+--- mount windows shares ---
+
+apt-get install cifs-utils
+
+sudo mount.cifs //servername/myshare /mnt/localmountpoint/myshare
+
+--- mount read/write FAT32 USB key ---
+
+mount FAT32 disks
+
+mount -t vfat /dev/sda /dev/null
+
+
+--- find hidded files and directories, save to file ---
+
+find $HOME/projects/ -name ".*" -ls > foo.txt
+
+-- get user list --
+
+cut -d : -f 1 /etc/passwd
+
+
+--- git info ---
+
+
+git clone git@git:it_admin
+
+
+git commit -am "update keypass"
+git push
+git pull
+
+
+zgrep (search compressed files)
+
+zgrep EXAMPLE STRING logfile.gz
+
+memory
+
+lshw -short -C memory
+dmidecode -t memory
+
+
+
+nvidia video card fix
+
+
+aptitude purge nvidia-common
+
+aptitude install nvidia-current
+
+cat /etc/issue
+
+lsb_release -a
+
+
+
+ln -s /ext/home2/%username%
+
+/etc/init.d/nscd stop <------- name service cache
+
+
+find space
+
+cd /
+
+du -skh .[!.]* *
+
+find the largest directory, cd to it, run again.
+
+Now you'll know what's hogging up all the space
+
+------------------
+
+sudo dmidecode --type memory
+
+
+Find free IP in AD
+
+dig @hq-ad-1 axfr engr.wavemarket.com | grep IP
+
+looking at all logs
+
+grep -r USERNAME .
+
+
+which version of ubuntu
+
+lsb_release -a
+
+----------------------
+fix gnome wm issues
+
+sudo apt-get install gnome-session-fallback
+
+sudo apt-get install gnome-panel
+
+sudo apt-get install gnome-shell
+
+----------------------
+find if virt:
+
+dmidecode | grep DC
+
+---------------------
+sound stuff:
+
+cat /proc/asound/cards
+lspci | grep -i audio
+
+--------------------
+fix disk uuid
+
+shift on boot, add to grub /dev/sda2
+/etc/default
+edit grub, remove uuid
+update-grub2
+reboot
+
+---------------------
+DenyUsers
+
+/etc/ssh
+--------------------
+
+Linux headers for nVidia install
+
+apt-get update
+apt-cache search linux-headers-$(uname -r)
+sudo apt-get install linux-headers-$(uname -r)
+apt-get install gcc
+
+
+amd radeon driver
+
+https://launchpad.net/~ubuntu-x-swat/+archive/x-updates/
+
+
+dhcp.conf <-- FAI for Debian *old*
+dhcp.conf.lucid <-- Ubuntu 10.04 FAI *current*
+
+
+add user to global sudeoers list
+
+ssh bellota
+/var/yp/ypfiles
+make -C /var/yp
+
+---------------------------
+
+no login screen
+open shell (alt + <F2>)
+/etc/init.d/gdm restart
+sudo !!
+
+--------------------------
+add encrypted key to machine
+
+generate key: ssh-keygen-t rsa
+.ssh in home dir copy key (id_rsa.pub)
+sudo su - (to root)
+add key to authorized_keys file in root home dir .ssh
+
+-------------------------
+
+Read=4
+Write=2
+Execute=1
+
+examples
+
+Write and Execute Only (-wx) = 3 
+Read only (r--) = 4 
+Read and Execute only (r-x) = 5 
+Read and Write only (rw-) = 6 
+Full Control (rwx) = 7
+
+------------------------- 
+
+sudo apt-get install sun-java6-bin sun-java6-jre sun-java6-jdk  sun-java6-plugin 
+
+sudo update-java-alternatives -s java-6-sun
+
+-------------------------
+check memory
+
+cat /proc/meminfo
+free -m
+
+-------------------------
+remove broken app
+
+dpkg -L package name
+dpkg -s package name
+rm /var/lib package.postrm
+sudo apt-get remove --purge package
+
+---------------------------
+VMWare install tricks
+
+sudo apt-get install build-essential linux-headers-$(uname -r)
+
+mod +x VMware-Player*.bundle
+sudo bash ./VMware-Player*.bundle
+
+--------------------------
+Printer Tips
+
+add BrowsePoll 192.168.1.163 to /etc/cups/cupsd.conf
+comment out "Browsing Off"
+add user to lpadmin group (sudo adduser username lpadmin)
+restart cups (sudo /etc/init.d/cups restart)
+
+---------------------------
+Useful stuff to remember
+
+man hier - file system info
+
+
+** tarball extraction
+tar xzvf *.tar.gz
+
+** extract bz2
+tar xvfj file.tar.bz2
+
+** untar
+tar -xvf filename
+
+** extract bgz (#2)
+tar -jxvf file -C /location
+
+----------------------------
+set user perms
+
+chgrp -R engr /data/home/%username%/
+chown -R %username% /data/home/%username%/
+
+
+
+
+to get uid
+
+ypcat passwd | grep *username*
+
+---------------------------
+ungzip logfiles
+
+gzip -dc filename.gz > filename
+
+--------------------------
+
+list installed packages
+
+dpkg --get-selections
+
+dpkg -l | grep ii | less
+
+--------------------------
+
+svn path (Windows)
+
+svn+ssh://USERNAME@svn/wm/docs
+
+svn co svn+ssh://josh@svn/wm/sys/nis_to_ldap
+
+--------------------------
+mount nfs
+
+sudo mount -t nfs iso:/data/iso /ext/iso
+
+-------------------------
+
+back to back tar
+
+tar -cpf - DIRECTORY | (cd /DEST : tar -xpf )
+
+------------------------
+
+tar & gzip
+
+tar -cvzf filename.tar.gz directory_to_compress/
+
+tar -czvf FILENAME.tar.gz DIRTOTAR/
+
+tar cvf archive.tar dir2compress -- c flag is for create
+
+tar zvf archive.tar.gz dir2compress
+
+tar jxvf archive.tar.bz2 dir2compress
+
+
+------------------------
+kill a remote user. ps -elf | grep pts
+
+
+ctrl-z	<------ stop job
+job contol "fg %job#"
+
+-----------------------
+
+rsync -vpa root@home:/data/home/sys/archives/ archives/
+
+Check for used space on home "cat du.m | sort -n"
+
+list software installed "dpkg -l | grep packagename"
+
+links.locationlabs.com ssh dump to /var/www-links
+
+test disk speed:
+sudo hdparm -t /dev/sda
+
+RPi disk test:
+
+hdparm -t /dev/mmcblk0
+
+Disk i/o + speed:
+iozone -i 0 -t 2
+
+craig: .@N@rCHwHY4AD  
+
+from hqbackup
+scp -r root@leche:/var/lib/wmwiki/ wmwiki/
+
+--------------------------------
+echo one file to another
+
+cat foo >> ~/bar
+
+
